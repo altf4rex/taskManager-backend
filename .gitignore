@@ -1,0 +1,41 @@
+# Общие системные и IDE файлы
+.DS_Store
+.idea
+.vscode
+*.swp
+*.swo
+
+# Зависимости
+node_modules/
+**/node_modules/
+
+# Environment файлы
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Логи
+*.log
+logs/
+npm-debug.log*
+
+# Сборки и артефакты
+dist/
+build/
+coverage/
+*.js
+*.js.map
+*.d.ts
+
+# Тестовые данные
+/test-results/
+
+# Prisma
+/generated/
+/prisma/migrations/engine/
+
+# Docker
+docker-compose.override.yml
+/data/  # Локальные данные контейнеров

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",          // Использовать ES-модули
+    "moduleResolution": "node",  // Разрешение модулей через Node.js
+    "target": "ES2022",          // Целевая версия ECMAScript
+    "esModuleInterop": true,     // Включить совместимость с CommonJS
+    "outDir": "./dist",          // Папка для скомпилированных файлов
+    "rootDir": "./src",          // Папка с исходным кодом
+    "strict": true               // Включить строгую проверку типов
+  },
+  "include": ["src/**/*"],       // Включать все файлы в папке src
+  "exclude": ["node_modules"]    // Исключить папку node_modules
+}

@@ -1,7 +1,10 @@
 {
   "type": "module",
-  "ts-node": {
-    "esm": true
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "node --loader ts-node/esm src/server.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.3.1",
@@ -14,7 +17,8 @@
     "express-validator": "^7.2.1",
     "helmet": "^8.0.0",
     "ioredis": "^5.5.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

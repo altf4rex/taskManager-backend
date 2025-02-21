@@ -1,16 +1,16 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import * as AuthService from './auth.service';
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = await AuthService.register(req.body);
       res.status(201).json(user);
     } catch (error: any) {
-      res.status(500).json({ message: error.message || 'Registration error' });
+      next(error);
     }
   };
 
-export const login = async(req: Request, res: Response) => {
+export const login = async(req: Request, res: Response, next: NextFunction) => {
     try{
         const token = await AuthService.login(req.body);
         res.cookie('token', token, {

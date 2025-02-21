@@ -18,4 +18,5 @@ router.post('/login', [
     validate
   ], AuthController.login);
 
-export default router
+export default router;
+

@@ -1,56 +1,83 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction  } from 'express';
 import * as TaskService from './task.service';
 
-// Получить список задач
-export const getAllTasks = async (req: Request, res: Response) => {
+// Get all tasks for the authenticated user
+export const getAllTasks = async (req: Request, res: Response, next: NextFunction ) => {
   try {
-    const tasks = await TaskService.getAllTasks();
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return
+    }
+    const tasks = await TaskService.getAllTasks(Number(userId));
     res.json(tasks);
   } catch (error) {
-    res.status(500).json({ message: 'Error retrieving tasks' });
+      next(error);
   }
 };
 
-// Получить задачу по id
-export const getTaskById = async (req: Request, res: Response) => {
-  const { id } = req.params;
+// Get a single task by its id
+export const getTaskById = async (req: Request, res: Response, next: NextFunction ) => {
   try {
-    const task = await TaskService.getTaskById(Number(id));
+    const { id } = req.params; // Task id 
+    const userId = req.user?.userId;
+    const task = await TaskService.getTaskById(Number(id), Number(id));
+    if (task?.userId !== userId) {
+       res.status(403).json({ message: 'Forbidden: You do not have access to this task' });
+       return
+    }
     if (task) res.json(task);
     else res.status(404).json({ message: 'Task not found' });
   } catch (error) {
-    res.status(500).json({ message: 'Error retrieving task' });
+    next(error);
   }
 };
 
-// Создать задачу
-export const createTask = async (req: Request, res: Response) => {
+// Create a new task
+export const createTask = async (req: Request, res: Response, next: NextFunction ) => {
   try {
-    const newTask = await TaskService.createTask(req.body);
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return
+    }
+    const data = req.body;
+    const newTask = await TaskService.createTask(data, Number(userId));
     res.status(201).json(newTask);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating task' });
+    next(error);
   }
 };
 
-// Обновить задачу
-export const updateTask = async (req: Request, res: Response) => {
-  const { id } = req.params;
+// Update an existing task
+export const updateTask = async (req: Request, res: Response, next: NextFunction ) => {
   try {
-    const updatedTask = await TaskService.updateTask(Number(id), req.body);
+    const { id } = req.params; // Task id
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return
+    }
+    const data = req.body;
+    const updatedTask = await TaskService.updateTask(Number(id), data, Number(userId));
     res.json(updatedTask);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating task' });
+    next(error);
   }
 };
 
-// Удалить задачу
-export const deleteTask = async (req: Request, res: Response) => {
-  const { id } = req.params;
+// Delete a task
+export const deleteTask = async (req: Request, res: Response, next: NextFunction ) => {
   try {
-    await TaskService.deleteTask(Number(id));
+    const { id } = req.params; // Task id
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return
+    }
+    await TaskService.deleteTask(Number(id), Number(userId));
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting task' });
+    next(error);
   }
 };

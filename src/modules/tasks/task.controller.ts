@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction  } from 'express';
-import * as TaskService from './task.service';
+import * as TaskService from './task.service.js';
 
 // Get all tasks for the authenticated user
 export const getAllTasks = async (req: Request, res: Response, next: NextFunction ) => {

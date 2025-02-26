@@ -1,4 +1,4 @@
-import redis from '../../config/redis';
+import redis from '../../config/redis.js';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

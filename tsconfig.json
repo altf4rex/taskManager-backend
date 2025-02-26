@@ -4,6 +4,7 @@
     "moduleResolution": "node",  // Разрешение модулей через Node.js
     "target": "ES2022",          // Целевая версия ECMAScript
     "esModuleInterop": true,     // Включить совместимость с CommonJS
+    "resolveJsonModule": true,
     "outDir": "./dist",          // Папка для скомпилированных файлов
     "rootDir": "./src",          // Папка с исходным кодом
     "strict": true               // Включить строгую проверку типов

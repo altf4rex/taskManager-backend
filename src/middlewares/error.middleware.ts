@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import logger from '../utils/logger'; // Логгер, настроенный через Winston
+import logger from '../utils/logger.js'; // Логгер, настроенный через Winston
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction): void => {
     // log errors with Winston

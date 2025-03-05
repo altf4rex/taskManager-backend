@@ -1,0 +1,8 @@
+# .dockerignore
+node_modules
+coverage
+logs
+.git
+.gitignore
+Dockerfile
+docker-compose.yml

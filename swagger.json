@@ -1,0 +1,656 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "TaskManager API",
+      "version": "1.0.0",
+      "description": "API для TaskManager, приложения для управления задачами."
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Локальный сервер"
+      }
+    ],
+    "paths": {
+      "/auth/register": {
+        "post": {
+          "summary": "Регистрация пользователя",
+          "tags": ["Auth"],
+          "requestBody": {
+            "description": "Данные для регистрации нового пользователя",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Пользователь успешно зарегистрирован",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Некорректный ввод данных"
+            }
+          }
+        }
+      },
+      "/auth/login": {
+        "post": {
+          "summary": "Вход пользователя",
+          "tags": ["Auth"],
+          "requestBody": {
+            "description": "Данные для входа пользователя",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Успешный вход",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AuthResponse"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Неверные учетные данные"
+            }
+          }
+        }
+      },
+      "/categories": {
+        "get": {
+          "summary": "Получить список категорий",
+          "tags": ["Categories"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Список категорий",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Category"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Создать новую категорию",
+          "tags": ["Categories"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "description": "Данные для создания категории",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewCategory"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Категория успешно создана",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Некорректные данные"
+            }
+          }
+        }
+      },
+      "/categories/{id}": {
+        "get": {
+          "summary": "Получить задачи категории по id",
+          "tags": ["Categories"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID категории",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Данные категории с задачами",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CategoryWithTasks"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Категория не найдена"
+            }
+          }
+        },
+        "patch": {
+          "summary": "Обновить категорию",
+          "tags": ["Categories"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID категории",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Данные для обновления категории",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCategory"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Категория успешно обновлена",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Некорректные данные"
+            },
+            "404": {
+              "description": "Категория не найдена"
+            }
+          }
+        },
+        "delete": {
+          "summary": "Удалить категорию",
+          "tags": ["Categories"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID категории",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Категория успешно удалена"
+            },
+            "404": {
+              "description": "Категория не найдена"
+            }
+          }
+        }
+      },
+      "/tasks": {
+        "get": {
+          "summary": "Получить список задач",
+          "tags": ["Tasks"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Список задач",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Task"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Создать новую задачу",
+          "tags": ["Tasks"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "description": "Данные для создания задачи",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTask"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Задача успешно создана",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Некорректные данные"
+            }
+          }
+        }
+      },
+      "/tasks/{id}": {
+        "get": {
+          "summary": "Получить задачу по id",
+          "tags": ["Tasks"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID задачи",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Данные задачи",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Задача не найдена"
+            }
+          }
+        },
+        "patch": {
+          "summary": "Обновить задачу",
+          "tags": ["Tasks"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID задачи",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Данные для обновления задачи",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateTask"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Задача успешно обновлена",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Некорректные данные"
+            },
+            "404": {
+              "description": "Задача не найдена"
+            }
+          }
+        },
+        "delete": {
+          "summary": "Удалить задачу",
+          "tags": ["Tasks"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID задачи",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Задача успешно удалена"
+            },
+            "404": {
+              "description": "Задача не найдена"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      },
+      "schemas": {
+        "RegisterRequest": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "password": {
+              "type": "string",
+              "minLength": 6
+            }
+          },
+          "required": ["email", "password"]
+        },
+        "LoginRequest": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": ["email", "password"]
+        },
+        "AuthResponse": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "type": "string"
+            },
+            "user": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        },
+        "User": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "name": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": ["id", "email"]
+        },
+        "Category": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "integer"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": ["id", "name", "userId"]
+        },
+        "NewCategory": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          },
+          "required": ["name"]
+        },
+        "CategoryWithTasks": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/Category"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "tasks": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "Task": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "isCompleted": {
+              "type": "boolean"
+            },
+            "isDaily": {
+              "type": "boolean"
+            },
+            "scheduledAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "userId": {
+              "type": "integer"
+            },
+            "categoryId": {
+              "type": "integer"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": ["id", "title", "userId", "categoryId", "scheduledAt"]
+        },
+        "NewTask": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "isDaily": {
+              "type": "boolean"
+            },
+            "scheduledAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "categoryId": {
+              "type": "integer"
+            }
+          },
+          "required": ["title", "scheduledAt", "categoryId"]
+        },
+        "UpdateCategory": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        },
+        "UpdateTask": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "isCompleted": {
+              "type": "boolean"
+            },
+            "isDaily": {
+              "type": "boolean"
+            },
+            "scheduledAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "categoryId": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  }
+  

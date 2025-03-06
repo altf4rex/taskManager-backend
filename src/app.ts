@@ -17,7 +17,7 @@ const app = express();
 app.use(helmet());
 
 app.use(cors({
-    origin: 'https://frontend-domain-expantion'
+    origin: 'https://task-manager-frontend-seven-zeta.vercel.app/'
   }));
 
 app.use(express.json());

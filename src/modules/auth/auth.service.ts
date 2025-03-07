@@ -41,5 +41,5 @@ export const login = async(data: any) => {
         { expiresIn: '1h' }
     )
 
-    return token
+    return {token, user}
 }

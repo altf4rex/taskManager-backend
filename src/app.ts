@@ -17,7 +17,8 @@ const app = express();
 app.use(helmet());
 
 app.use(cors({
-    origin: 'https://task-manager-frontend-seven-zeta.vercel.app/'
+    origin: 'https://task-manager-frontend-seven-zeta.vercel.app/',
+    credentials: true, 
   }));
 
 app.use(express.json());

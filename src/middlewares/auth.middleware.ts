@@ -22,7 +22,9 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
       res.status(403).json({ message: 'Forbidden: Invalid token' });
       return;
     }
-    
+    console.log(decoded)
+    console.log(req.user)
+    console.log(req.user.userID)
     req.user = decoded;
     next();
   });

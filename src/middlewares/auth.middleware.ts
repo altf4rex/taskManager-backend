@@ -22,10 +22,13 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
       res.status(403).json({ message: 'Forbidden: Invalid token' });
       return;
     }
-    console.log(decoded)
-    console.log(req.user)
-    console.log(req.user.userID)
-    req.user = decoded;
+    // decoded содержит { userId, email, iat, exp }
+    console.log("Decoded token:", decoded);
+    req.user = decoded;  // Устанавливаем req.user после логирования decoded
+    console.log("req.user after assignment:", req.user);
+    // Если нужно логировать userId, используйте правильное название:
+    console.log("User ID:", req.user.userId);
     next();
   });
+  
 };

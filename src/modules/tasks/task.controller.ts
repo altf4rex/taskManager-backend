@@ -41,7 +41,9 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
       res.status(401).json({ message: 'Unauthorized' });
       return
     }
+    
     const data = req.body;
+    console.log("createTask data from req.body:", data)
     const newTask = await TaskService.createTask(data, Number(userId));
     res.status(201).json(newTask);
   } catch (error) {

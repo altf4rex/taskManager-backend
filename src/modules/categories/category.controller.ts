@@ -29,6 +29,7 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
     const userId = req.user?.userId;
     if (!userId) {
       res.status(401).json({ message: 'Unauthorized: User ID missing' });
+      return
     }
     // Объединяем данные из запроса с userId
     const data = { ...req.body, userId };

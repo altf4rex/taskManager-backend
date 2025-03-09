@@ -28,10 +28,11 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
     // Извлекаем userId из req.user (установленного в authenticateJWT)
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ message: 'Unauthorized: User ID missing' });
+      res.status(401).json({ message: 'Unauthorized: User ID missing' });
     }
     // Объединяем данные из запроса с userId
     const data = { ...req.body, userId };
+    console.log(data);
     const newCategory = await CategoryService.createCategory(data);
     res.status(201).json(newCategory);
   } catch (error) {

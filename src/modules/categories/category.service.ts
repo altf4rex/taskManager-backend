@@ -16,6 +16,7 @@ export const getCategoryTasksByid = async(id: number) => {
 }
 
 export const createCategory = async(data: any) => {
+    console.log(data)
     return await prisma.category.create({
       data: {
         name: data.name,

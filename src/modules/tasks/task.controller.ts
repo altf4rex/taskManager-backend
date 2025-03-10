@@ -2,19 +2,31 @@ import { Request, Response, NextFunction  } from 'express';
 import * as TaskService from './task.service.js';
 
 // Get all tasks for the authenticated user
-export const getAllTasks = async (req: Request, res: Response, next: NextFunction ) => {
+// TaskController.getAllTasks.ts
+export const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      res.status(401).json({ message: 'Unauthorized' });
-      return
+       res.status(401).json({ message: "Unauthorized" });
+       return
     }
-    const tasks = await TaskService.getAllTasks(Number(userId));
+
+    const { categoryId, completed } = req.query;
+    const filters: any = {};
+    if (categoryId) {
+      filters.categoryId = Number(categoryId);
+    }
+    if (completed !== undefined) {
+      filters.completed = completed === "true"; // преобразование строки в boolean
+    }
+
+    const tasks = await TaskService.getAllTasks(Number(userId), filters);
     res.json(tasks);
   } catch (error) {
-      next(error);
+    next(error);
   }
 };
+
 
 // Get a single task by its id
 export const getTaskById = async (req: Request, res: Response, next: NextFunction ) => {

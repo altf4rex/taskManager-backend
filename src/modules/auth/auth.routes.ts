@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { check } from 'express-validator';
 import * as AuthController from './auth.controller.js';
 import { validate } from '../../middlewares/validation.middleware.js';
+import { authenticateJWT } from '../../middlewares/auth.middleware.js';
 
 const router = Router();
 
@@ -17,6 +18,8 @@ router.post('/login', [
     check('password').notEmpty().withMessage('Password is required'),
     validate
   ], AuthController.login);
+
+ router.get('/me', authenticateJWT, AuthController.getCurrentUser);
 
 export default router;
 

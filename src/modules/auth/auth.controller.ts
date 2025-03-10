@@ -25,3 +25,15 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
         res.status(401).json({ message: error.message || 'Invalid credentials' });
     }
 }
+
+export const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+       res.status(401).json({ message: "Unauthorized" });
+       return
+    }
+    res.json({ user: req.user });
+  } catch (error) {
+    next(error);
+  }
+};

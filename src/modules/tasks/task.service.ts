@@ -46,7 +46,6 @@ export const getTaskById = async (id: number, userId: number) => {
     include: { user: true, category: true },
   });
 };
-
 export const createTask = async (data: any, userId: number) => {
   await invalidateTasksCache(userId);
 
@@ -56,6 +55,7 @@ export const createTask = async (data: any, userId: number) => {
       description: data.description,
       scheduledAt: new Date(data.scheduledAt),
       isDaily: data.isDaily || false,
+      priority: data.priority,  // Добавлено: передаем приоритет из запроса
       user: { connect: { id: userId } },
       category: { connect: { id: data.categoryId } },
     },

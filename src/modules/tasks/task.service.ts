@@ -17,7 +17,7 @@ export const getAllTasks = async (
     whereClause.isCompleted = filters.completed;
   }
 
-  // Формируем ключ для кеша, включающий фильтры
+  // Формируем ключ для кэша, включающий фильтры
   let cacheKey = `tasks:user:${userId}`;
   if (filters) {
     cacheKey += `:category:${filters.categoryId ?? "all"}:completed:${
@@ -39,13 +39,13 @@ export const getAllTasks = async (
   return tasks;
 };
 
-
 export const getTaskById = async (id: number, userId: number) => {
   return await prisma.task.findFirst({
     where: { id, userId },
     include: { user: true, category: true },
   });
 };
+
 export const createTask = async (data: any, userId: number) => {
   await invalidateTasksCache(userId);
 
@@ -55,7 +55,7 @@ export const createTask = async (data: any, userId: number) => {
       description: data.description,
       scheduledAt: new Date(data.scheduledAt),
       isDaily: data.isDaily || false,
-      priority: data.priority,  // Добавлено: передаем приоритет из запроса
+      priority: data.priority, // Передаем приоритет из запроса
       user: { connect: { id: userId } },
       category: { connect: { id: data.categoryId } },
     },
@@ -79,7 +79,11 @@ export const deleteTask = async (id: number, userId: number) => {
   });
 };
 
+// Функция для инвалидирования кэша: удаляем все ключи, начинающиеся с префикса tasks:user:{userId}
 export const invalidateTasksCache = async (userId: number) => {
-  const cacheKey = `tasks:user:${userId}`;
-  await redis.del(cacheKey);
+  const pattern = `tasks:user:${userId}*`;
+  const keys = await redis.keys(pattern);
+  if (keys.length > 0) {
+    await redis.del(...keys);
+  }
 };

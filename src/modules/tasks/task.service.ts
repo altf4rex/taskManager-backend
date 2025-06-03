@@ -8,7 +8,6 @@ export const getAllTasks = async (
   userId: number,
   filters?: { categoryId?: number; completed?: boolean }
 ) => {
-  // Строим динамическое условие where
   const whereClause: any = { userId };
   if (filters?.categoryId) {
     whereClause.categoryId = filters.categoryId;
@@ -17,7 +16,6 @@ export const getAllTasks = async (
     whereClause.isCompleted = filters.completed;
   }
 
-  // Формируем ключ для кэша, включающий фильтры
   let cacheKey = `tasks:user:${userId}`;
   if (filters) {
     cacheKey += `:category:${filters.categoryId ?? "all"}:completed:${
@@ -25,9 +23,14 @@ export const getAllTasks = async (
     }`;
   }
 
-  const cachedData = await redis.get(cacheKey);
-  if (cachedData) {
-    return JSON.parse(cachedData);
+  // Попытка получить из кэша
+  try {
+    const cachedData = await redis.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+  } catch (err) {
+    console.warn("Redis get failed:", err);
   }
 
   const tasks = await prisma.task.findMany({
@@ -35,7 +38,13 @@ export const getAllTasks = async (
     include: { user: true, category: true },
   });
 
-  await redis.set(cacheKey, JSON.stringify(tasks), "EX", 300);
+  // Попытка сохранить в кэш
+  try {
+    await redis.set(cacheKey, JSON.stringify(tasks), "EX", 300);
+  } catch (err) {
+    console.warn("Redis set failed:", err);
+  }
+
   return tasks;
 };
 
@@ -81,9 +90,14 @@ export const deleteTask = async (id: number, userId: number) => {
 
 // Функция для инвалидирования кэша: удаляем все ключи, начинающиеся с префикса tasks:user:{userId}
 export const invalidateTasksCache = async (userId: number) => {
-  const pattern = `tasks:user:${userId}*`;
-  const keys = await redis.keys(pattern);
-  if (keys.length > 0) {
-    await redis.del(...keys);
+  try {
+    const pattern = `tasks:user:${userId}*`;
+    const keys = await redis.keys(pattern);
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+  } catch (err) {
+    console.warn("Redis cache invalidation failed:", err);
   }
 };
+

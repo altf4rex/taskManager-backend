@@ -23,11 +23,8 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
       return;
     }
     // decoded содержит { userId, email, iat, exp }
-    console.log("Decoded token:", decoded);
     req.user = decoded;  // Устанавливаем req.user после логирования decoded
-    console.log("req.user after assignment:", req.user);
     // Если нужно логировать userId, используйте правильное название:
-    console.log("User ID:", req.user.userId);
     next();
   });
   
